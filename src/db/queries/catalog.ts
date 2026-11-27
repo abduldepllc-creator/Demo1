@@ -57,6 +57,17 @@ export async function getProductBySlug(slug: string): Promise<ProductWithCategor
   return product ?? null;
 }
 
+export async function getCategoryBySlug(slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("catalog");
+  const category = await db.query.categories.findFirst({
+    where: eq(categories.slug, slug),
+    with: { products: { with: { category: true }, orderBy: [desc(products.featured), asc(products.id)] } },
+  });
+  return category ?? null;
+}
+
 export async function getRelatedProducts(
   categoryId: number,
   excludeId: number,

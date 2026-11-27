@@ -22,7 +22,9 @@ import {
   Wallet,
 } from "lucide-react";
 import { getCategoriesWithCounts, getFeaturedProducts } from "@/db/queries/catalog";
-import { CITIES, STATS } from "@/constants";
+import { CITIES, SERVICE_LINKS, STATS } from "@/constants";
+import { GUIDES } from "@/content/guides";
+import { GuideCard } from "@/components/guides/guide-card";
 import { Hero } from "@/components/home/hero";
 import { Marquee } from "@/components/home/marquee";
 import { CategoryCard } from "@/components/home/category-card";
@@ -48,6 +50,15 @@ const WHY = [
   { icon: Microscope, title: "Lab-Tested Batches", text: "pH, clarity, hardness and melt-point checked for every production run, with batch numbers." },
   { icon: Headset, title: "Dedicated Support", text: "A real account manager on WhatsApp and phone to help with orders, samples and technical queries." },
 ];
+
+const SERVICE_ICONS = {
+  "/wholesale": BadgePercent,
+  "/private-label": Tag,
+  "/quality": Microscope,
+  "/shipping": Truck,
+} as const;
+
+const SERVICES = SERVICE_LINKS.map((s) => ({ ...s, icon: SERVICE_ICONS[s.href] }));
 
 const STEPS = [
   { icon: ClipboardList, title: "Choose your base", text: "Browse our catalogue and shortlist the soap bases that suit your products." },
@@ -140,7 +151,7 @@ export default async function HomePage() {
       </section>
 
       {/* Featured products */}
-      <section className="bg-mist py-20 sm:py-28">
+      <section className="cv-auto bg-mist py-20 sm:py-28">
         <div className="container-x">
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <SectionHeading
@@ -167,7 +178,7 @@ export default async function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="relative isolate overflow-hidden bg-navy py-20 sm:py-24">
+      <section className="cv-auto relative isolate overflow-hidden bg-navy py-20 sm:py-24">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_80%_at_50%_0%,rgba(41,157,54,0.3),transparent_70%)]" />
         <div className="grid-pattern absolute inset-0 -z-10" />
         <div className="container-x">
@@ -191,7 +202,7 @@ export default async function HomePage() {
       </section>
 
       {/* Why choose us */}
-      <section className="container-x py-20 sm:py-28">
+      <section className="cv-auto container-x py-20 sm:py-28">
         <SectionHeading
           eyebrow="Why SoapBase"
           title="The wholesale partner serious soap makers rely on"
@@ -200,7 +211,7 @@ export default async function HomePage() {
         <Stagger className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {WHY.map((w) => (
             <StaggerItem key={w.title}>
-              <div className="group relative h-full overflow-hidden rounded-3xl border border-navy/8 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-transparent hover:bg-navy hover:shadow-lift">
+              <div className="spotlight group h-full overflow-hidden rounded-3xl border border-navy/8 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-transparent hover:bg-navy hover:shadow-lift">
                 <span className="grid size-14 place-items-center rounded-2xl bg-brand-50 text-brand transition-all duration-500 group-hover:scale-110 group-hover:bg-brand group-hover:text-white">
                   <w.icon className="size-7" />
                 </span>
@@ -217,7 +228,7 @@ export default async function HomePage() {
       </section>
 
       {/* Process */}
-      <section className="bg-mist py-20 sm:py-28">
+      <section className="cv-auto bg-mist py-20 sm:py-28">
         <div className="container-x">
           <SectionHeading
             eyebrow="How It Works"
@@ -244,9 +255,45 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Services */}
+      <section className="cv-auto relative isolate py-20 sm:py-28">
+        <div className="dot-pattern absolute inset-0 -z-10 mask-[radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
+        <div className="container-x">
+          <SectionHeading
+            eyebrow="Our Services"
+            title={
+              <>
+                More than a supplier — <span className="text-brand">a growth partner</span>
+              </>
+            }
+            description="Wholesale accounts, custom formulations, lab-tested quality and nationwide logistics, all under one roof."
+          />
+          <Stagger className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {SERVICES.map((s) => (
+              <StaggerItem key={s.href}>
+                <Link
+                  href={s.href}
+                  className="spotlight group flex h-full flex-col overflow-hidden rounded-3xl border border-navy/8 bg-white p-7 shadow-soft transition-all duration-500 hover:-translate-y-2 hover:shadow-lift"
+                >
+                  <span className="grid size-14 place-items-center rounded-2xl bg-navy text-white transition-all duration-500 group-hover:rotate-6 group-hover:bg-brand">
+                    <s.icon className="size-7" />
+                  </span>
+                  <h3 className="mt-6 text-lg font-extrabold text-navy">{s.label}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{s.text}</p>
+                  <span className="mt-5 flex items-center gap-1.5 text-sm font-bold text-brand">
+                    Learn more
+                    <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
+      </section>
+
       {/* Industries */}
-      <section className="container-x py-20 sm:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+      <section className="cv-auto bg-mist py-20 sm:py-28">
+        <div className="container-x grid items-center gap-12 lg:grid-cols-2">
           <SectionHeading
             align="left"
             eyebrow="Who We Serve"
@@ -269,7 +316,7 @@ export default async function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="relative isolate overflow-hidden bg-navy py-20 sm:py-28">
+      <section className="cv-auto relative isolate overflow-hidden bg-navy py-20 sm:py-28">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_60%_at_100%_100%,rgba(41,157,54,0.3),transparent_70%)]" />
         <div className="container-x">
           <SectionHeading
@@ -281,7 +328,7 @@ export default async function HomePage() {
           <Stagger className="mt-14 grid gap-5 md:grid-cols-3" stagger={0.15}>
             {TESTIMONIALS.map((t) => (
               <StaggerItem key={t.name}>
-                <figure className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-7 backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:bg-white/10">
+                <figure className="spotlight spotlight-light flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-7 backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:bg-white/10">
                   <div className="flex gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star key={i} className="size-4 fill-amber-400 text-amber-400" />
@@ -307,6 +354,31 @@ export default async function HomePage() {
             ))}
           </Stagger>
         </div>
+      </section>
+
+      {/* Guides */}
+      <section className="cv-auto container-x py-20 sm:py-28">
+        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            align="left"
+            eyebrow="Learn & Grow"
+            title="Soap making guides"
+            description="Practical tips from our team to help you make better soap and grow your business."
+          />
+          <Reveal>
+            <Link href="/guides" className="btn btn-outline group">
+              All guides
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
+        </div>
+        <Stagger className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+          {GUIDES.slice(0, 3).map((g) => (
+            <StaggerItem key={g.slug}>
+              <GuideCard guide={g} />
+            </StaggerItem>
+          ))}
+        </Stagger>
       </section>
 
       <CtaBand />

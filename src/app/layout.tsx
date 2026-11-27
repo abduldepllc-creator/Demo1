@@ -4,6 +4,9 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { WhatsAppButton } from "@/components/shared/whatsapp-button";
+import { ScrollProgress } from "@/components/effects/scroll-progress";
+import { BackToTop } from "@/components/effects/back-to-top";
+import { PointerGlow } from "@/components/effects/pointer-glow";
 import { siteConfig } from "@/config/site";
 import { getCategories } from "@/db/queries/catalog";
 
@@ -53,12 +56,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   }));
 
   return (
-    <html lang="en" className={`${jakarta.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
+    // suppressHydrationWarning: browser extensions (e.g. ColorZilla's `cz-shortcut-listen`, Grammarly)
+    // add attributes to <html>/<body> before React hydrates. This ignores attribute differences on these
+    // two elements only. Mismatches in child components are still reported.
+    <html lang="en" className={`${jakarta.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
+        {/* If JavaScript is unavailable, show scroll-reveal content immediately instead of leaving it hidden. */}
+        <noscript>
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+        <ScrollProgress />
         <Header categories={navCategories} />
         <main className="flex-1">{children}</main>
         <Footer />
+        <BackToTop />
         <WhatsAppButton />
+        <PointerGlow />
       </body>
     </html>
   );

@@ -47,7 +47,7 @@ export function QuoteForm({ products }: { products: { slug: string; name: string
   const errors = state.fieldErrors ?? {};
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] border border-navy/8 bg-white p-6 shadow-lift sm:p-9">
+    <div className="relative overflow-hidden rounded-4xl border border-navy/8 bg-white p-6 shadow-lift sm:p-9">
       <AnimatePresence mode="wait">
         {state.status === "success" && formKey === 0 ? (
           <motion.div
@@ -158,7 +158,7 @@ export function QuoteForm({ products }: { products: { slug: string; name: string
             <button
               type="submit"
               disabled={pending}
-              className={cn("btn btn-primary group !py-4 text-base sm:col-span-2", pending && "opacity-80")}
+              className={cn("btn btn-primary group py-4! text-base sm:col-span-2", pending && "opacity-80")}
             >
               {pending ? (
                 <>

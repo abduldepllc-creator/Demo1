@@ -10,7 +10,7 @@ export function CtaBand() {
   return (
     <section className="container-x py-16 sm:py-24">
       <Reveal>
-        <div className="relative isolate overflow-hidden rounded-[2rem] bg-linear-to-br from-brand-600 via-brand to-[#3fb14b] px-6 py-14 text-center shadow-glow sm:px-12 sm:py-20 lg:text-left">
+        <div className="relative isolate overflow-hidden rounded-4xl bg-linear-to-br from-brand-600 via-brand to-[#3fb14b] px-6 py-14 text-center shadow-glow sm:px-12 sm:py-20 lg:text-left">
           <Bubbles count={8} className="-z-10 opacity-70" />
           <div className="absolute -top-20 -left-20 -z-10 size-72 rounded-full bg-white/15 blur-3xl" />
           <div className="absolute -right-24 -bottom-24 -z-10 size-80 rounded-full bg-navy/30 blur-3xl" />
@@ -26,7 +26,7 @@ export function CtaBand() {
                 12% on orders of 1 ton and above.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
-                <Link href="/contact" className="btn btn-navy group !px-7 !py-4">
+                <Link href="/contact" className="btn btn-navy group px-7! py-4!">
                   Request a Quote
                   <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -34,7 +34,7 @@ export function CtaBand() {
                   href={whatsappLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn !px-7 !py-4 bg-white text-navy hover:-translate-y-0.5 hover:shadow-lift"
+                  className="btn px-7! py-4! bg-white text-navy hover:-translate-y-0.5 hover:shadow-lift"
                 >
                   <WhatsAppIcon className="size-5 text-[#25D366]" />
                   WhatsApp Us

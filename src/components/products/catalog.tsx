@@ -67,7 +67,7 @@ export function Catalog({ products, categories }: { products: ProductWithCategor
   return (
     <div className="container-x pb-20 sm:pb-28">
       {/* Toolbar */}
-      <div className="sticky top-[70px] z-30 -mx-4 border-b border-navy/5 bg-white/90 px-4 py-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="sticky top-17.5 z-30 -mx-4 border-b border-navy/5 bg-white/90 px-4 py-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
             {chips.map((c) => (
@@ -111,7 +111,7 @@ export function Catalog({ products, categories }: { products: ProductWithCategor
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search soap bases…"
-                className="input !rounded-full !py-2.5 !pl-10"
+                className="input rounded-full! py-2.5! pl-10!"
               />
             </label>
             <label className="relative">
@@ -120,7 +120,7 @@ export function Catalog({ products, categories }: { products: ProductWithCategor
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as Sort)}
-                className="input !w-auto cursor-pointer appearance-none !rounded-full !py-2.5 !pr-4 !pl-10 text-sm font-semibold"
+                className="input w-auto! cursor-pointer appearance-none rounded-full! py-2.5! pr-4! pl-10! text-sm font-semibold"
               >
                 {SORTS.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -193,7 +193,7 @@ export function CatalogSkeleton() {
       </div>
       <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-[420px] animate-pulse rounded-3xl bg-mist" />
+          <div key={i} className="h-105 animate-pulse rounded-3xl bg-mist" />
         ))}
       </div>
     </div>

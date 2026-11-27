@@ -10,16 +10,16 @@ export function ProductCard({ product }: { product: ProductWithCategory }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-navy/8 bg-white shadow-soft transition-all duration-500 hover:-translate-y-2 hover:border-brand/30 hover:shadow-lift"
+      className="spotlight group flex h-full flex-col overflow-hidden rounded-3xl border border-navy/8 bg-white shadow-soft transition-all duration-500 hover:-translate-y-2 hover:border-brand/30 hover:shadow-lift"
     >
       {/* Visual */}
       <div
-        className="relative flex aspect-[4/3] items-center justify-center overflow-hidden"
+        className="relative flex aspect-4/3 items-center justify-center overflow-hidden"
         style={{
           background: `radial-gradient(circle at 50% 40%, ${color}66 0%, #f1f4f2 70%)`,
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,rgba(255,255,255,0.6)_50%,transparent_70%)] bg-[length:250%_100%] opacity-0 transition-opacity duration-500 group-hover:animate-shimmer group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,rgba(255,255,255,0.6)_50%,transparent_70%)] bg-size-[250%_100%] opacity-0 transition-opacity duration-500 group-hover:animate-shimmer group-hover:opacity-100" />
         <SoapBlock
           color={color}
           translucent={product.category.translucent}

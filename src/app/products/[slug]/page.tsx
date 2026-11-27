@@ -53,7 +53,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
         title={product.name}
         crumbs={[
           { label: "Products", href: "/products" },
-          { label: product.category.name, href: `/products?category=${product.category.slug}` },
+          { label: product.category.name, href: `/categories/${product.category.slug}` },
           { label: product.sku },
         ]}
       />
@@ -63,7 +63,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           {/* Visual */}
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
             <div
-              className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2rem] border border-navy/5"
+              className="relative flex aspect-square items-center justify-center overflow-hidden rounded-4xl border border-navy/5"
               style={{ background: `radial-gradient(circle at 50% 40%, ${color}88 0%, #f1f4f2 72%)` }}
             >
               <div className="animate-spin-slow absolute inset-[10%] rounded-full border-2 border-dashed border-navy/10" />
@@ -100,7 +100,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           <div>
             <Reveal delay={0.1}>
               <Link
-                href={`/products?category=${product.category.slug}`}
+                href={`/categories/${product.category.slug}`}
                 className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-bold tracking-wide text-brand-700 uppercase"
               >
                 {product.category.name}

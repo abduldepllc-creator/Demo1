@@ -17,8 +17,8 @@ type Props = {
 export function CategoryCard(c: Props) {
   return (
     <Link
-      href={`/products?category=${c.slug}`}
-      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-navy/8 bg-white p-6 shadow-soft transition-all duration-500 hover:-translate-y-2 hover:shadow-lift sm:p-7"
+      href={`/categories/${c.slug}`}
+      className="spotlight group flex h-full flex-col overflow-hidden rounded-3xl border border-navy/8 bg-white p-6 shadow-soft transition-all duration-500 hover:-translate-y-2 hover:shadow-lift sm:p-7"
     >
       <div
         className="absolute -top-24 -right-24 size-64 rounded-full opacity-60 blur-2xl transition-all duration-700 group-hover:scale-125 group-hover:opacity-90"
@@ -33,7 +33,7 @@ export function CategoryCard(c: Props) {
         </span>
       </div>
 
-      <div className="relative mx-auto my-6 w-[70%] max-w-[240px]">
+      <div className="relative mx-auto my-6 w-[70%] max-w-60">
         <SoapBlock
           color={c.color}
           translucent={c.translucent}

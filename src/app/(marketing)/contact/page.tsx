@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Clock, Mail, MapPin, Phone } from "lucide-react";
+import { ALL_FAQS } from "@/content/faqs";
 import { siteConfig, whatsappLink } from "@/config/site";
 import { getProducts } from "@/db/queries/catalog";
 import { PageHero } from "@/components/shared/page-hero";
@@ -66,7 +68,7 @@ export default async function ContactPage() {
                     </span>
                     <span className="min-w-0">
                       <span className="block text-xs font-bold tracking-wider text-muted uppercase">{c.label}</span>
-                      <span className="block font-bold break-words text-navy">{c.value}</span>
+                      <span className="block font-bold wrap-break-word text-navy">{c.value}</span>
                     </span>
                   </>
                 );
@@ -88,7 +90,7 @@ export default async function ContactPage() {
           </div>
 
           <Reveal delay={0.15}>
-            <Suspense fallback={<div className="h-[640px] animate-pulse rounded-[2rem] bg-mist" />}>
+            <Suspense fallback={<div className="h-160 animate-pulse rounded-4xl bg-mist" />}>
               <QuoteForm products={products} />
             </Suspense>
           </Reveal>
@@ -104,7 +106,11 @@ export default async function ContactPage() {
             description="Quick answers about ordering, delivery and our soap bases. Can't find yours? Just ask on WhatsApp."
           />
           <Reveal delay={0.1}>
-            <Faq />
+            <Faq items={ALL_FAQS.slice(0, 6)} />
+            <Link href="/faq" className="btn btn-outline group mt-6">
+              View all FAQs
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </Reveal>
         </div>
       </section>

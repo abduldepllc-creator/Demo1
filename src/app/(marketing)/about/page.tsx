@@ -47,7 +47,7 @@ export default function AboutPage() {
           <Reveal x={-30} y={0}>
             <div className="relative">
               <div className="absolute -inset-4 -z-10 rotate-2 rounded-[2.5rem] bg-linear-to-br from-brand/20 to-navy/10" />
-              <div className="rounded-[2rem] border border-navy/5 bg-white p-6 shadow-lift sm:p-10">
+              <div className="rounded-4xl border border-navy/5 bg-white p-6 shadow-lift sm:p-10">
                 <Image
                   src="/images/logo-full.png"
                   alt="SoapBase.pk — Premium Raw Soap Base in Bulk"

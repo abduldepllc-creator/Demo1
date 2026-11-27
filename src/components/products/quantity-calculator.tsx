@@ -60,7 +60,7 @@ export function QuantityCalculator({
           value={qty || ""}
           onChange={(e) => setQty(Number(e.target.value))}
           onBlur={() => setQty(safeQty)}
-          className="input !py-3 text-center text-lg font-extrabold"
+          className="input py-3! text-center text-lg font-extrabold"
         />
         <button
           type="button"

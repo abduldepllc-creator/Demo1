@@ -3,41 +3,15 @@
 import { AnimatePresence, motion } from "motion/react";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import type { Faq as FaqItem } from "@/content/faqs";
 import { cn } from "@/lib/utils";
 
-const FAQS = [
-  {
-    q: "What is the minimum order quantity?",
-    a: "Our MOQ is 20–25 kg depending on the base. Volume discounts start at 100 kg, with up to 12% off on orders of 1 ton and above.",
-  },
-  {
-    q: "Do you deliver across Pakistan?",
-    a: "Yes. We dispatch to 60+ cities through trusted cargo partners. Orders are typically dispatched within 48–72 hours of payment confirmation.",
-  },
-  {
-    q: "Can I get a sample before placing a bulk order?",
-    a: "Absolutely. We offer 1 kg sample packs of any base so you can test clarity, lather and fragrance load before committing to bulk.",
-  },
-  {
-    q: "Do you offer custom formulations or private labelling?",
-    a: "Yes — for larger orders we can adjust clarity, hardness, colour, additives and packaging, and supply under your own brand label.",
-  },
-  {
-    q: "How should soap base be stored?",
-    a: "Keep it sealed in its original wrap in a cool, dry place away from direct sunlight. Most of our bases have an 18–24 month shelf life.",
-  },
-  {
-    q: "What payment methods do you accept?",
-    a: "We accept bank transfer (IBFT), and for established customers we offer flexible credit terms on repeat orders.",
-  },
-];
-
-export function Faq() {
-  const [open, setOpen] = useState<number | null>(0);
+export function Faq({ items, defaultOpen = 0 }: { items: FaqItem[]; defaultOpen?: number | null }) {
+  const [open, setOpen] = useState<number | null>(defaultOpen);
 
   return (
     <div className="divide-y divide-navy/8 rounded-3xl border border-navy/8 bg-white">
-      {FAQS.map((f, i) => {
+      {items.map((f, i) => {
         const isOpen = open === i;
         return (
           <div key={f.q}>
@@ -45,7 +19,7 @@ export function Faq() {
               type="button"
               onClick={() => setOpen(isOpen ? null : i)}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-7"
+              className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition-colors hover:text-brand-700 sm:px-7"
             >
               <span className="font-bold text-navy sm:text-lg">{f.q}</span>
               <span

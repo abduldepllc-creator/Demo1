@@ -32,6 +32,80 @@
   --animate-rise: rise 14s linear infinite;
   --animate-pulse-ring: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
   --animate-gradient: gradient-pan 8s ease infinite;
+  --animate-fade-up: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 1.2s ease both;
+  --animate-scale-in: scale-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-drift: drift 22s ease-in-out infinite;
+  --animate-drift-alt: drift-alt 26s ease-in-out infinite;
+  --animate-border-spin: border-spin 6s linear infinite;
+  --animate-wiggle: wiggle 3.5s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.86);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    33% {
+      transform: translate3d(6%, -8%, 0) scale(1.08);
+    }
+    66% {
+      transform: translate3d(-5%, 6%, 0) scale(0.95);
+    }
+  }
+  @keyframes drift-alt {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(-8%, -6%, 0) scale(1.12);
+    }
+  }
+  @keyframes border-spin {
+    to {
+      --angle: 360deg;
+    }
+  }
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-6deg);
+    }
+    75% {
+      transform: rotate(6deg);
+    }
+  }
 
   @keyframes float {
     0%,
@@ -93,6 +167,13 @@
       background-position: 100% 50%;
     }
   }
+}
+
+/* Animatable angle for the rotating gradient border */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 @layer base {
@@ -255,6 +336,133 @@
     outline: none;
     border-color: var(--color-brand);
     box-shadow: 0 0 0 4px rgb(41 157 54 / 0.15);
+  }
+}
+
+@layer components {
+  /* Skip rendering work for off-screen sections until they approach the viewport */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+
+  /* Soft animated colour blobs (transform-only, GPU friendly) */
+  .aurora {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(60px);
+    will-change: transform;
+    pointer-events: none;
+  }
+
+  .dot-pattern {
+    background-image: radial-gradient(rgb(13 44 80 / 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .dot-pattern-light {
+    background-image: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /* Cursor-following highlight; --mx/--my are set by <PointerGlow /> */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgb(41 157 54 / 0.12),
+      transparent 45%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+  .spotlight-light::after {
+    background: radial-gradient(
+      380px circle at var(--mx, 50%) var(--my, 50%),
+      rgb(255 255 255 / 0.12),
+      transparent 45%
+    );
+  }
+
+  /* Rotating gradient border */
+  .glow-border {
+    position: relative;
+    isolation: isolate;
+  }
+  .glow-border::before {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(from var(--angle), #299d36, #0d2c50 25%, #4cc25a 50%, #0d2c50 75%, #299d36);
+    animation: var(--animate-border-spin);
+  }
+
+  /* Long-form content (guides, policies) */
+  .prose-sb {
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+  .prose-sb h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--color-navy);
+    scroll-margin-top: 7rem;
+  }
+  .prose-sb h3 {
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-navy);
+  }
+  .prose-sb p {
+    margin-bottom: 1rem;
+  }
+  .prose-sb ul,
+  .prose-sb ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.25rem;
+  }
+  .prose-sb ul {
+    list-style: disc;
+  }
+  .prose-sb ol {
+    list-style: decimal;
+  }
+  .prose-sb li {
+    margin-bottom: 0.4rem;
+    padding-left: 0.25rem;
+  }
+  .prose-sb li::marker {
+    color: var(--color-brand);
+    font-weight: 700;
+  }
+  .prose-sb strong {
+    color: var(--color-navy);
+    font-weight: 700;
+  }
+  .prose-sb a {
+    color: var(--color-brand-600);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 }
 
