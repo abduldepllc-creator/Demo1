@@ -1,7 +1,9 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { env, storageConfigured } from "@/config/env";
+import { env, localStorageMode, storageConfigured } from "@/config/env";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED: Record<string, string> = {
@@ -10,6 +12,10 @@ const ALLOWED: Record<string, string> = {
   "image/webp": "webp",
   "image/avif": "avif",
 };
+
+/** Local development uploads live here and are served as /uploads/... */
+const LOCAL_ROOT = path.join(process.cwd(), "public", "uploads");
+const LOCAL_PREFIX = "/uploads/";
 
 function client() {
   if (!storageConfigured) {
@@ -26,22 +32,44 @@ export function validateImage(file: File) {
   return null;
 }
 
-/** Upload an image to Supabase Storage and return its public URL. */
+/**
+ * Upload an image and return its public URL.
+ * Supabase Storage when configured; otherwise (development only) public/uploads/.
+ */
 export async function uploadImage(file: File, folder: "products" | "categories") {
   const problem = validateImage(file);
   if (problem) throw new Error(problem);
+  const name = `${randomUUID()}.${ALLOWED[file.type]}`;
+  const bytes = Buffer.from(await file.arrayBuffer());
+
+  if (!storageConfigured && localStorageMode) {
+    const dir = path.join(LOCAL_ROOT, folder);
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, name), bytes);
+    return `${LOCAL_PREFIX}${folder}/${name}`;
+  }
+
   const supabase = client();
-  const path = `${folder}/${new Date().getFullYear()}/${randomUUID()}.${ALLOWED[file.type]}`;
+  const objectPath = `${folder}/${new Date().getFullYear()}/${name}`;
   const { error } = await supabase.storage
     .from(env.SUPABASE_STORAGE_BUCKET)
-    .upload(path, Buffer.from(await file.arrayBuffer()), { contentType: file.type, cacheControl: "31536000", upsert: false });
+    .upload(objectPath, bytes, { contentType: file.type, cacheControl: "31536000", upsert: false });
   if (error) throw new Error(`Upload failed: ${error.message}`);
-  return supabase.storage.from(env.SUPABASE_STORAGE_BUCKET).getPublicUrl(path).data.publicUrl;
+  return supabase.storage.from(env.SUPABASE_STORAGE_BUCKET).getPublicUrl(objectPath).data.publicUrl;
 }
 
-/** Delete images previously uploaded to our bucket. Other URLs are ignored. Never throws. */
+/** Delete images we uploaded (Supabase bucket or local dev folder). Other URLs are ignored. Never throws. */
 export async function deleteImages(urls: string[]) {
-  if (!storageConfigured || urls.length === 0) return;
+  if (urls.length === 0) return;
+
+  // Local development uploads
+  for (const u of urls.filter((x) => x.startsWith(LOCAL_PREFIX))) {
+    const file = path.resolve(LOCAL_ROOT, u.slice(LOCAL_PREFIX.length));
+    if (!file.startsWith(LOCAL_ROOT + path.sep)) continue; // never leave the uploads folder
+    await unlink(file).catch(() => {});
+  }
+
+  if (!storageConfigured) return;
   const marker = `/storage/v1/object/public/${env.SUPABASE_STORAGE_BUCKET}/`;
   const paths = urls.map((u) => (u.includes(marker) ? u.split(marker)[1] : null)).filter((p): p is string => Boolean(p));
   if (paths.length === 0) return;

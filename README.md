@@ -32,6 +32,24 @@ npm run dev                   # http://localhost:3000  ·  admin: http://localho
 
 `npm run setup` is safe to run again at any time: it applies new migrations, seeds only when the database is empty, and repairs the storage bucket.
 
+### No Supabase account yet? Use the local dummy database
+
+The project includes a real **PostgreSQL 17** server (the same engine Supabase uses) that runs from `node_modules`. No install, no account.
+
+```bash
+npm install
+cp .env.example .env
+# in .env set:  DATABASE_URL=postgresql://postgres:postgres@localhost:54329/soapbase
+npm run dev:local             # starts the local database + the website together
+```
+
+- The first start creates the tables and loads the sample data. Data is kept in `.local-db/` (git-ignored) between runs.
+- Image uploads in the admin work too: in development without Supabase keys they're saved to `public/uploads/` (git-ignored).
+- Prefer two terminals? Run `npm run db:local` in one and `npm run dev` in the other.
+- Start over with fresh sample data: stop everything, delete the `.local-db` folder, and run `npm run dev:local` again (or run `npm run db:reset` while the database is running).
+- **Switching to Supabase later:** put your Supabase values in `.env`, run `npm run setup`, then use `npm run dev` as normal. Local data isn't copied; re-enter real products in the admin panel, or seed and edit.
+- On **macOS/Linux**, if `npm install` warns that `@embedded-postgres/*` install scripts were skipped and the local database fails to start, run `npm approve-scripts @embedded-postgres/<your-platform>` (as listed in the warning), then `npm rebuild`. On Windows the skipped script does nothing, so no action is needed.
+
 ---
 
 ## Project status
@@ -41,7 +59,8 @@ npm run dev                   # http://localhost:3000  ·  admin: http://localho
 | Website (customer side) | ✅ Complete: 14 page types, all catalogue data from the database |
 | Admin panel (`/admin`) | ✅ Complete: 10 sections with full create/edit/delete (see [Admin panel](#admin-panel)) |
 | Database | ✅ Supabase Postgres via Drizzle ORM. 9 tables, Row Level Security on all tables |
-| Image uploads | ✅ Supabase Storage (product galleries & category images). Needs Supabase keys in `.env` |
+| Image uploads | ✅ Supabase Storage (product galleries & category images). In development without keys, saved locally to `public/uploads/` |
+| Local dummy database | ✅ `npm run dev:local` runs everything on a local PostgreSQL 17, no Supabase account needed |
 | One-command setup | ✅ `npm run setup` (migrate + seed + storage bucket) |
 | Responsive | ✅ Public site and every admin page checked at 1440px, 768px and 390px (no horizontal overflow) |
 | Build / lint / types | ✅ `npm run build`, `npm run lint`, `tsc` all pass |
@@ -80,6 +99,8 @@ _Last updated: 28 November 2026_
 | --- | --- |
 | `npm run setup` | **First run / after pulling changes.** Checks `.env`, generates `ADMIN_SESSION_SECRET` if empty, applies migrations, seeds if empty, creates the storage bucket |
 | `npm run dev` | Development server |
+| `npm run dev:local` | **No Supabase needed:** starts the local dummy PostgreSQL (port 54329, data in `.local-db/`) and the dev server together; creates tables & sample data on first run |
+| `npm run db:local` | Starts only the local dummy database (keep it running, then `npm run dev` in another terminal) |
 | `npm run build` / `npm run start` | Production build / serve it |
 | `npm run lint` | ESLint |
 | `npm run db:generate` | Create a new SQL migration in `db/migrations/` after changing `src/db/schema` |
@@ -275,6 +296,25 @@ The app is ready for **Vercel + Supabase** (or any Node.js host):
 ---
 
 ## Changelog
+
+### v2.2 — Loaders, progress bar & confirmation modals (28 Nov 2026)
+- **No browser dialogs anywhere.** The only `window.confirm` (admin delete/approve/hide buttons) is replaced by a themed **confirmation modal** (`src/components/admin/confirm-dialog.tsx`). It's a centered card on larger screens and a bottom sheet on phones, with danger / success / neutral tones and icons, and a title taken from the question (e.g. *Delete "Crystal Clear…"?*). Esc and backdrop close it, focus is trapped and restored, Cancel is focused by default for destructive actions, it shows a spinner while working, and errors appear inside the dialog. The `ConfirmAction` API is unchanged.
+- **Branded loader** (`src/components/shared/brand-loader.tsx`): the logo in a spinning gradient ring with a breathing halo and rising bubbles. Pure CSS, animating only transform and opacity. Used for the app start screen (`src/app/loading.tsx`), admin page loads (`src/app/admin/(panel)/loading.tsx`), product/category/guide page skeletons and the contact form.
+- **Navigation progress bar** (`src/components/shared/navigation-progress.tsx`): a slim green bar at the top while moving between pages, on both the website and the admin panel. One delegated click listener, CSS animation.
+- **Shimmer skeletons** (`.skeleton`, `.skeleton-dark`, `.skeleton-white` in `globals.css`) replace the plain grey pulse placeholders.
+- Everything respects `prefers-reduced-motion` and was checked at 1440px and 390px.
+
+### v2.1 — Local dummy database (28 Nov 2026)
+- New **`npm run dev:local`** / **`npm run db:local`**: run the whole site and admin panel without Supabase, on a real local PostgreSQL 17 (`embedded-postgres` dev dependency, data in `.local-db/`). The first run migrates and seeds automatically.
+- **Local image uploads in development:** without Supabase keys, admin uploads are saved to `public/uploads/` and deleted again when removed. Production still requires Supabase Storage.
+- Admin → Settings labels the database as local or Supabase, and shows the image storage mode.
+- `/setup` redirects to the home page once a database is configured (handled in `proxy.ts`).
+- The "Setup required" page and `.env.example` explain the local option.
+
+### v2.0.2 — Friendly "Setup required" screen (28 Nov 2026)
+- On a fresh clone with no `DATABASE_URL`, the app no longer crashes with a `ZodError`. `src/proxy.ts` redirects every page to **`/setup`**, which lists the missing settings and the exact steps (where to find the Supabase connection string, what to paste into `.env`, `npm run setup`). API routes return `503` with a short JSON message.
+- Once the database is configured, `/setup` redirects to the home page and the proxy check costs nothing noticeable (one environment-variable test per request; static files and images are excluded).
+- `src/db/index.ts` now connects lazily, so importing it never throws. The first query without a database raises a clear `DatabaseNotConfiguredError`.
 
 ### v2.0.1 — Dev console fixes (28 Nov 2026)
 - **Hydration warnings from browser form-fillers fixed.** Extensions such as password managers add `fdprocessedid="…"` to every input and button before React loads, which logged "A tree hydrated but some attributes … didn't match". `src/app/layout.tsx` now includes a **development-only** inline script that removes just that attribute (via a `MutationObserver`) before hydration. It is never sent to production, where React doesn't report these mismatches anyway. To cover another extension, add its attribute to `EXTENSION_ATTRS`.

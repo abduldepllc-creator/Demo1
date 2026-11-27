@@ -4,7 +4,7 @@ import { asc, eq } from "drizzle-orm";
 import { ExternalLink } from "lucide-react";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
-import { storageConfigured } from "@/config/env";
+import { imageUploadsEnabled } from "@/config/env";
 import { requireAdmin } from "@/lib/admin-session";
 import { deleteProduct } from "@/actions/admin/products";
 import { PageHeader } from "@/components/admin/ui";
@@ -41,7 +41,7 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
           </>
         }
       />
-      <ProductForm product={product} categories={cats} storageReady={storageConfigured} />
+      <ProductForm product={product} categories={cats} storageReady={imageUploadsEnabled} />
     </>
   );
 }

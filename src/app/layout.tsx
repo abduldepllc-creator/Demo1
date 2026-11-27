@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
 import { siteConfig } from "@/config/site";
+import { NavigationProgress } from "@/components/shared/navigation-progress";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -67,6 +69,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript>
           <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
+        <Suspense>
+          <NavigationProgress />
+        </Suspense>
         {children}
       </body>
     </html>

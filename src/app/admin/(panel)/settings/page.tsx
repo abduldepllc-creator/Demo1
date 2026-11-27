@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { createClient } from "@supabase/supabase-js";
 import { AlertTriangle, CheckCircle2, Database, HardDrive, KeyRound, RefreshCw, XCircle } from "lucide-react";
 import { db } from "@/db";
-import { env, storageConfigured } from "@/config/env";
+import { env, localStorageMode, storageConfigured } from "@/config/env";
 import { requireAdmin } from "@/lib/admin-session";
 import { refreshWebsiteCache } from "@/actions/admin/settings";
 import { Card, PageHeader } from "@/components/admin/ui";
@@ -22,6 +22,8 @@ async function checkDatabase() {
 }
 
 async function checkStorage() {
+  if (!storageConfigured && localStorageMode)
+    return { ok: true, detail: "Development mode: uploads are saved to public/uploads/. Add Supabase keys before going live." };
   if (!storageConfigured) return { ok: false, detail: "NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set. Image uploads are disabled." };
   try {
     const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
@@ -39,7 +41,7 @@ function Status({ ok, label, detail }: { ok: boolean; label: string; detail: str
       {ok ? <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-brand" /> : <XCircle className="mt-0.5 size-5 shrink-0 text-red-600" />}
       <div className="min-w-0">
         <p className="font-bold text-navy">{label}</p>
-        <p className="text-sm break-words text-muted">{detail}</p>
+        <p className="text-sm wrap-break-word text-muted">{detail}</p>
       </div>
     </div>
   );
@@ -73,7 +75,11 @@ export default async function AdminSettingsPage() {
       <div className="grid gap-6 xl:grid-cols-2">
         <Card title={<span className="flex items-center gap-2"><Database className="size-4" /> System status</span>}>
           <div className="space-y-4 p-5">
-            <Status ok={database.ok} label="Database (Supabase Postgres)" detail={`${database.detail} · host ${dbHost}`} />
+            <Status
+              ok={database.ok}
+              label={dbHost.startsWith("localhost") ? "Database (local dummy PostgreSQL)" : "Database (Supabase Postgres)"}
+              detail={`${database.detail} · host ${dbHost}`}
+            />
             <Status ok={storage.ok} label="Image storage (Supabase Storage)" detail={storage.detail} />
             <Status ok={Boolean(env.ADMIN_SESSION_SECRET)} label="Session secret" detail={env.ADMIN_SESSION_SECRET ? "ADMIN_SESSION_SECRET is set" : "Not set. Run npm run setup to generate one (required in production)."} />
           </div>

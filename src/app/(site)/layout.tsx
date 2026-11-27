@@ -5,7 +5,6 @@ import { ScrollProgress } from "@/components/effects/scroll-progress";
 import { BackToTop } from "@/components/effects/back-to-top";
 import { PointerGlow } from "@/components/effects/pointer-glow";
 import { getCategories } from "@/db/queries/catalog";
-
 /** Public website chrome: header, footer and global effects. */
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const categories = await getCategories();

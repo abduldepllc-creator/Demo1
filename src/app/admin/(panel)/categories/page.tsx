@@ -77,6 +77,8 @@ export default async function AdminCategoriesPage() {
                 <Link href={`/admin/categories/${c.id}`} className={btn("outline", "sm")}><Pencil className="size-3.5" /> Edit</Link>
                 <ConfirmAction
                   action={deleteCategory.bind(null, c.id)}
+                  title={c.productCount ? `Can't delete "${c.name}" yet` : undefined}
+                  confirmLabel={c.productCount ? "Try anyway" : undefined}
                   message={c.productCount ? `"${c.name}" still has ${c.productCount} products. Move or delete them first.` : `Delete "${c.name}"?`}
                 />
               </div>

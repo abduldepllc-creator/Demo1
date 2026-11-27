@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { ExternalLink } from "lucide-react";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
-import { storageConfigured } from "@/config/env";
+import { imageUploadsEnabled } from "@/config/env";
 import { requireAdmin } from "@/lib/admin-session";
 import { PageHeader } from "@/components/admin/ui";
 import { CategoryForm } from "@/components/admin/category-form";
@@ -31,7 +31,7 @@ export default async function EditCategoryPage({ params }: PageProps<"/admin/cat
           ) : undefined
         }
       />
-      <CategoryForm category={category} storageReady={storageConfigured} />
+      <CategoryForm category={category} storageReady={imageUploadsEnabled} />
     </>
   );
 }

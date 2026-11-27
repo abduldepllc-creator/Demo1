@@ -11,6 +11,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { WhatsAppIcon } from "@/components/shared/icons";
 import { QuoteForm } from "@/components/contact/quote-form";
 import { Faq } from "@/components/contact/faq";
+import { BrandLoader } from "@/components/shared/brand-loader";
 
 export const metadata: Metadata = {
   title: "Contact & Bulk Quotes",
@@ -90,7 +91,7 @@ export default async function ContactPage() {
           </div>
 
           <Reveal delay={0.15}>
-            <Suspense fallback={<div className="h-160 animate-pulse rounded-4xl bg-mist" />}>
+            <Suspense fallback={<div className="skeleton grid h-160 place-items-center rounded-4xl"><BrandLoader size="sm" label="Loading form" /></div>}>
               <QuoteForm products={products} />
             </Suspense>
           </Reveal>

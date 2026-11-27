@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Toast } from "@/components/admin/toast";
+import { AdminPageLoading } from "@/components/admin/page-loading";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s · Admin | SoapBase" },
@@ -12,24 +13,10 @@ export const metadata: Metadata = {
 // of instant-navigation validation (see Next.js docs: authentication-with-cache-components).
 export const instant = false;
 
-function PageLoading() {
-  return (
-    <div className="space-y-4" aria-busy="true">
-      <div className="h-9 w-56 animate-pulse rounded-xl bg-white" />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-28 animate-pulse rounded-2xl bg-white" />
-        ))}
-      </div>
-      <div className="h-96 animate-pulse rounded-2xl bg-white" />
-    </div>
-  );
-}
-
 export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminShell>
-      <Suspense fallback={<PageLoading />}>{children}</Suspense>
+      <Suspense fallback={<AdminPageLoading />}>{children}</Suspense>
       <Suspense>
         <Toast />
       </Suspense>

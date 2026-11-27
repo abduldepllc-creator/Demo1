@@ -13,7 +13,9 @@
     "db:seed": "tsx db/seed/index.ts",
     "setup": "tsx db/scripts/setup.ts",
     "db:reset": "tsx db/seed/index.ts --reset",
-    "storage:setup": "tsx db/scripts/storage.ts"
+    "storage:setup": "tsx db/scripts/storage.ts",
+    "db:local": "tsx db/scripts/local-db.ts",
+    "dev:local": "tsx db/scripts/local-db.ts --with-dev"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",
@@ -34,6 +36,7 @@
     "@types/react-dom": "^19",
     "dotenv": "^18.0.10",
     "drizzle-kit": "^0.31.11",
+    "embedded-postgres": "^17.12.0-beta.19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",

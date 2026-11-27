@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
-import { storageConfigured } from "@/config/env";
+import { imageUploadsEnabled } from "@/config/env";
 import { requireAdmin } from "@/lib/admin-session";
 import { PageHeader } from "@/components/admin/ui";
 import { ProductForm } from "@/components/admin/product-form";
@@ -15,7 +15,7 @@ export default async function NewProductPage() {
   return (
     <>
       <PageHeader title="Add product" back={{ href: "/admin/products", label: "Products" }} />
-      <ProductForm categories={cats} storageReady={storageConfigured} />
+      <ProductForm categories={cats} storageReady={imageUploadsEnabled} />
     </>
   );
 }
