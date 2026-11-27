@@ -5,6 +5,7 @@ import { siteConfig, whatsappLink } from "@/config/site";
 import { LEGAL_LINKS, SERVICE_LINKS } from "@/constants";
 import { getCategories } from "@/db/queries/catalog";
 import { Logo } from "./header";
+import { NewsletterForm } from "./newsletter-form";
 import { PakistanFlag, WhatsAppIcon } from "@/components/shared/icons";
 
 const COMPANY_LINKS = [
@@ -44,6 +45,19 @@ export async function Footer() {
       <div className="pointer-events-none absolute -top-40 -right-40 -z-10 size-112 rounded-full bg-brand/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-40 -left-40 -z-10 size-96 rounded-full bg-blue-500/10 blur-3xl" />
       <div className="dot-pattern-light absolute inset-0 -z-10 opacity-50" />
+
+      {/* Newsletter */}
+      <div className="container-x relative pt-12">
+        <div className="flex flex-col items-start gap-6 rounded-4xl border border-white/10 bg-white/5 p-6 backdrop-blur sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h3 className="text-xl font-extrabold text-white sm:text-2xl">Get wholesale offers & new launches</h3>
+            <p className="mt-1 text-sm">Monthly price updates and soap-making tips. No spam, unsubscribe anytime.</p>
+          </div>
+          <div className="w-full lg:max-w-md">
+            <NewsletterForm />
+          </div>
+        </div>
+      </div>
 
       {/* Contact strip */}
       <div className="container-x relative">

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { ArrowRight, CheckCircle2, Lightbulb, Sparkles } from "lucide-react";
 import { getCategories, getCategoryBySlug } from "@/db/queries/catalog";
-import { CATEGORY_CONTENT } from "@/content/categories";
 import { formatPKR } from "@/lib/utils";
 import { PageHero } from "@/components/shared/page-hero";
 import { SoapBlock } from "@/components/shared/soap-block";
@@ -44,7 +44,16 @@ async function CategoryContent({ params }: Pick<PageProps<"/categories/[slug]">,
   const [category, all] = await Promise.all([getCategoryBySlug(slug), getCategories()]);
   if (!category) notFound();
 
-  const content = CATEGORY_CONTENT[category.slug];
+  // Landing-page content is edited in Admin → Categories.
+  const content =
+    category.headline || category.benefits.length || category.applications.length || category.proTip
+      ? {
+          headline: category.headline || category.tagline,
+          benefits: category.benefits,
+          applications: category.applications,
+          tip: category.proTip,
+        }
+      : null;
   const fromPrice = category.products.length ? Math.min(...category.products.map((p) => p.pricePerKg)) : null;
   const minMoq = category.products.length ? Math.min(...category.products.map((p) => p.moq)) : null;
   const others = all.filter((c) => c.slug !== category.slug);
@@ -60,9 +69,15 @@ async function CategoryContent({ params }: Pick<PageProps<"/categories/[slug]">,
           <div className="relative mx-auto w-full max-w-sm">
             <div className="absolute inset-[8%] rounded-full blur-3xl" style={{ background: `${category.color}55` }} />
             <div className="animate-spin-slow absolute inset-0 rounded-full border-2 border-dashed border-white/15" />
-            <div className="animate-float relative p-10">
-              <SoapBlock color={category.color} translucent={category.translucent} />
-            </div>
+            {category.imageUrl ? (
+              <div className="relative m-8 aspect-square overflow-hidden rounded-full border-4 border-white/20">
+                <Image src={category.imageUrl} alt={category.name} fill sizes="320px" className="object-cover" priority />
+              </div>
+            ) : (
+              <div className="animate-float relative p-10">
+                <SoapBlock color={category.color} translucent={category.translucent} />
+              </div>
+            )}
           </div>
         }
       >
@@ -118,6 +133,7 @@ async function CategoryContent({ params }: Pick<PageProps<"/categories/[slug]">,
               </Stagger>
             </div>
             <div className="space-y-6">
+              {content.applications.length > 0 && (
               <Reveal delay={0.1}>
                 <div className="relative isolate overflow-hidden rounded-3xl bg-navy p-7 text-white sm:p-8">
                   <div className="absolute -top-16 -right-16 -z-10 size-48 rounded-full bg-brand/30 blur-3xl" />
@@ -136,6 +152,8 @@ async function CategoryContent({ params }: Pick<PageProps<"/categories/[slug]">,
                   </ul>
                 </div>
               </Reveal>
+              )}
+              {content.tip && (
               <Reveal delay={0.2}>
                 <div className="glow-border rounded-3xl">
                   <div className="rounded-3xl bg-white p-7 sm:p-8">
@@ -146,6 +164,7 @@ async function CategoryContent({ params }: Pick<PageProps<"/categories/[slug]">,
                   </div>
                 </div>
               </Reveal>
+              )}
             </div>
           </div>
         </section>

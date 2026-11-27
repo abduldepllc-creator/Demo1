@@ -1,6 +1,7 @@
-import type { NewCategory, NewProduct } from "@/db/schema";
+import type { NewCategory, NewProduct } from "../../src/db/schema";
+import { CATEGORY_CONTENT } from "./category-content";
 
-export const categoryData: NewCategory[] = [
+const baseCategories: NewCategory[] = [
   {
     slug: "transparent",
     name: "Transparent Soap Base",
@@ -62,6 +63,29 @@ export const categoryData: NewCategory[] = [
     sortOrder: 6,
   },
 ];
+
+export const categoryData: NewCategory[] = baseCategories.map((c) => {
+  const content = CATEGORY_CONTENT[c.slug];
+  return content
+    ? { ...c, headline: content.headline, benefits: content.benefits, applications: content.applications, proTip: content.proTip }
+    : c;
+});
+
+/** Opening stock (kg) per product SKU */
+export const OPENING_STOCK: Record<string, number> = {
+  "SB-TR-001": 1850,
+  "SB-TR-002": 640,
+  "SB-MK-001": 2100,
+  "SB-MK-002": 420,
+  "SB-GM-001": 380,
+  "SB-GM-002": 85,
+  "SB-AV-001": 760,
+  "SB-AV-002": 0,
+  "SB-SH-001": 540,
+  "SB-SH-002": 60,
+  "SB-CH-001": 920,
+  "SB-CH-002": 310,
+};
 
 const PACKS = ["1 kg block", "5 kg slab", "10 kg carton", "25 kg carton"];
 const BULK_PACKS = ["10 kg carton", "25 kg carton", "50 kg drum"];

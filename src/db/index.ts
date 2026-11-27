@@ -1,19 +1,22 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient, type Client } from "@libsql/client";
+import "server-only";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { env } from "@/config/env";
 import * as schema from "./schema";
 
-// Reuse the client across hot reloads in development.
-const globalForDb = globalThis as unknown as { dbClient?: Client };
+// Reuse one connection pool across hot reloads in development.
+const globalForDb = globalThis as unknown as { pgClient?: ReturnType<typeof postgres> };
 
 const client =
-  globalForDb.dbClient ??
-  createClient({
-    url: env.DATABASE_URL,
-    authToken: env.DATABASE_AUTH_TOKEN || undefined,
+  globalForDb.pgClient ??
+  postgres(env.DATABASE_URL, {
+    // Supabase's transaction pooler (port 6543) does not support prepared statements.
+    prepare: false,
+    max: env.NODE_ENV === "production" ? 10 : 5,
+    idle_timeout: 20,
   });
 
-if (env.NODE_ENV !== "production") globalForDb.dbClient = client;
+if (env.NODE_ENV !== "production") globalForDb.pgClient = client;
 
 export const db = drizzle(client, { schema });
 export type DB = typeof db;

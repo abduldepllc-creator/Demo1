@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { ArrowLeft, CheckCircle2, Package, ShieldCheck, Star, Truck } from "lucide-react";
-import { getProductBySlug, getProducts, getRelatedProducts } from "@/db/queries/catalog";
+import { getApprovedReviews, getProductBySlug, getProducts, getRelatedProducts } from "@/db/queries/catalog";
+import { ProductGallery } from "@/components/products/product-gallery";
+import { ProductReviews } from "@/components/products/product-reviews";
 import { getPriceTiers } from "@/lib/pricing";
 import { formatPKR } from "@/lib/utils";
 import { PageHero } from "@/components/shared/page-hero";
@@ -44,7 +46,10 @@ async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "p
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product.categoryId, product.id);
+  const [related, reviews] = await Promise.all([
+    getRelatedProducts(product.categoryId, product.id),
+    getApprovedReviews(product.id),
+  ]);
   const color = product.color ?? product.category.color;
   const tiers = getPriceTiers(product.moq);
 
@@ -74,6 +79,15 @@ async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "p
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
           {/* Visual */}
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            {product.images.length > 0 ? (
+              <ProductGallery images={product.images} name={product.name}>
+                {product.badge && (
+                  <span className="absolute top-5 left-5 rounded-full bg-navy px-4 py-1.5 text-xs font-bold tracking-wide text-white uppercase">
+                    {product.badge}
+                  </span>
+                )}
+              </ProductGallery>
+            ) : (
             <div
               className="relative flex aspect-square items-center justify-center overflow-hidden rounded-4xl border border-navy/5"
               style={{ background: `radial-gradient(circle at 50% 40%, ${color}88 0%, #f1f4f2 72%)` }}
@@ -106,6 +120,7 @@ async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "p
                 ))}
               </div>
             </div>
+            )}
           </Reveal>
 
           {/* Details */}
@@ -118,17 +133,21 @@ async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "p
                 {product.category.name}
               </Link>
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="flex items-center gap-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`size-4 ${i < Math.round(product.rating) ? "fill-amber-400 text-amber-400" : "text-navy/20"}`}
-                    />
-                  ))}
-                  <span className="ml-1 font-bold text-navy">{product.rating.toFixed(1)}</span>
-                </span>
-                <span className="flex items-center gap-1.5 font-semibold text-brand-700">
-                  <span className="size-2 rounded-full bg-brand" /> {product.inStock ? "In stock" : "Made to order"}
+                {product.reviewCount > 0 && (
+                  <a href="#reviews" className="flex items-center gap-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`size-4 ${i < Math.round(product.rating) ? "fill-amber-400 text-amber-400" : "text-navy/20"}`}
+                      />
+                    ))}
+                    <span className="ml-1 font-bold text-navy">{product.rating.toFixed(1)}</span>
+                    <span className="text-muted">({product.reviewCount} reviews)</span>
+                  </a>
+                )}
+                <span className={`flex items-center gap-1.5 font-semibold ${product.stockKg > 0 ? "text-brand-700" : "text-amber-700"}`}>
+                  <span className={`size-2 rounded-full ${product.stockKg > 0 ? "bg-brand" : "bg-amber-500"}`} />
+                  {product.stockKg > 0 ? "In stock" : "Made to order"}
                 </span>
               </div>
               <p className="mt-5 text-lg leading-relaxed text-muted">{product.description}</p>
@@ -233,6 +252,8 @@ async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "p
           </Reveal>
         </div>
       </section>
+
+      <ProductReviews productId={product.id} rating={product.rating} count={product.reviewCount} reviews={reviews} />
 
       {/* Related */}
       <section className="bg-mist py-20 sm:py-24">

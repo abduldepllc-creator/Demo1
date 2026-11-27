@@ -1,9 +1,9 @@
-/** Extra marketing content for each category landing page, keyed by category slug. */
+﻿/** Seed content for each category landing page (stored in the categories table), keyed by slug. */
 export type CategoryContent = {
   headline: string;
   benefits: { title: string; text: string }[];
   applications: string[];
-  tip: string;
+  proTip: string;
 };
 
 export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
@@ -12,10 +12,10 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
     benefits: [
       { title: "Brilliant clarity", text: "Shows off embeds, botanicals, glitter and layered colours." },
       { title: "Low-sweat formula", text: "Made to resist glycerin dew in humid weather." },
-      { title: "Fast, clean melt", text: "Melts smoothly at 60–65 °C with minimal bubbles." },
+      { title: "Fast, clean melt", text: "Melts smoothly at 60â€“65 Â°C with minimal bubbles." },
     ],
     applications: ["Gift & festive soaps", "Embedded designs", "Hotel amenities", "Kids' novelty soaps", "Corporate giveaways"],
-    tip: "Spritz rubbing alcohol on the surface right after pouring to remove bubbles and keep a glass-clear finish.",
+    proTip: "Spritz rubbing alcohol on the surface right after pouring to remove bubbles and keep a glass-clear finish.",
   },
   milky: {
     headline: "Smooth, opaque white for true pastel colours",
@@ -25,7 +25,7 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
       { title: "Creamy lather", text: "A rich, mild lather that everyday customers love." },
     ],
     applications: ["Everyday bath bars", "Layered & swirled soaps", "Baby-care ranges", "Hotel soaps", "Detailed mould designs"],
-    tip: "Pour milky layers at a slightly lower temperature than clear layers so the two stay crisp and separate.",
+    proTip: "Pour milky layers at a slightly lower temperature than clear layers so the two stay crisp and separate.",
   },
   "goat-milk": {
     headline: "Real goat milk for gentle, nourishing skincare",
@@ -35,7 +35,7 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
       { title: "Premium positioning", text: "A high-value base for luxury and natural brands." },
     ],
     applications: ["Sensitive-skin ranges", "Baby-care soaps", "Premium natural brands", "Winter-care collections", "Spa & salon retail"],
-    tip: "Keep goat milk base under 65 °C when melting. Overheating can scorch the milk and darken its colour.",
+    proTip: "Keep goat milk base under 65 Â°C when melting. Overheating can scorch the milk and darken its colour.",
   },
   "aloe-vera": {
     headline: "Soothing botanical goodness in a fresh green bar",
@@ -45,7 +45,7 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
       { title: "Light & hydrating", text: "Great for face bars and summer ranges." },
     ],
     applications: ["Herbal ranges", "Summer collections", "After-sun soaps", "Facial bars", "Natural & organic brands"],
-    tip: "Pair aloe bases with cucumber, mint or green tea fragrances for a refreshing spa-style range.",
+    proTip: "Pair aloe bases with cucumber, mint or green tea fragrances for a refreshing spa-style range.",
   },
   "shea-butter": {
     headline: "Luxurious, conditioning bars with a lotion-like lather",
@@ -55,7 +55,7 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
       { title: "Spa-grade feel", text: "Ideal for luxury and premium gift ranges." },
     ],
     applications: ["Luxury & spa ranges", "Dry-skin care", "Winter collections", "Premium gift boxes", "Men's grooming"],
-    tip: "Butter-rich bases set more slowly. Allow extra cooling time before you unmould them for a flawless surface.",
+    proTip: "Butter-rich bases set more slowly. Allow extra cooling time before you unmould them for a flawless surface.",
   },
   charcoal: {
     headline: "Bold black bars that deep-clean and detox",
@@ -65,6 +65,6 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
       { title: "Oil control", text: "Ideal for oily, acne-prone and active skin." },
     ],
     applications: ["Men's grooming", "Anti-acne ranges", "Detox & face bars", "Sports & active lines", "Trend-led product drops"],
-    tip: "Layer charcoal with a white base for a dramatic black-and-white bar that customers love.",
+    proTip: "Layer charcoal with a white base for a dramatic black-and-white bar that customers love.",
   },
 };
