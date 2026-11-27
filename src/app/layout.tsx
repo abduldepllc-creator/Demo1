@@ -1,14 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { WhatsAppButton } from "@/components/shared/whatsapp-button";
-import { ScrollProgress } from "@/components/effects/scroll-progress";
-import { BackToTop } from "@/components/effects/back-to-top";
-import { PointerGlow } from "@/components/effects/pointer-glow";
+import { Suspense } from "react";
 import { siteConfig } from "@/config/site";
-import { getCategories } from "@/db/queries/catalog";
+import { NavigationProgress } from "@/components/shared/navigation-progress";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -45,33 +40,39 @@ export const viewport: Viewport = {
   themeColor: "#0d2c50",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const categories = await getCategories();
-  const navCategories = categories.map(({ slug, name, tagline, color, translucent }) => ({
-    slug,
-    name,
-    tagline,
-    color,
-    translucent,
-  }));
+/**
+ * Development-only fix for hydration warnings caused by browser form-filler extensions
+ * (they add `fdprocessedid="…"` to every input/button before React hydrates).
+ * Strips only these extension-owned attributes, as they appear, before hydration.
+ * Never shipped to production (React doesn't report these mismatches there anyway).
+ */
+const EXTENSION_ATTRS = ["fdprocessedid"];
+const EXTENSION_ATTR_CLEANUP = `(()=>{var a=${JSON.stringify(EXTENSION_ATTRS)};function s(el){for(var i=0;i<a.length;i++){if(el.hasAttribute&&el.hasAttribute(a[i]))el.removeAttribute(a[i]);}}
+new MutationObserver(function(m){for(var i=0;i<m.length;i++)s(m[i].target);}).observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:a});
+document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(a.map(function(x){return"["+x+"]";}).join(",")).forEach(s);});})();`;
 
+/** Minimal HTML shell shared by the public site ((site) group) and the admin panel (/admin). */
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // suppressHydrationWarning: browser extensions (e.g. ColorZilla's `cz-shortcut-listen`, Grammarly)
     // add attributes to <html>/<body> before React hydrates. This ignores attribute differences on these
     // two elements only. Mismatches in child components are still reported.
     <html lang="en" className={`${jakarta.variable} h-full antialiased`} suppressHydrationWarning>
+      {process.env.NODE_ENV === "development" && (
+        <head>
+          {/* Dev only: see EXTENSION_ATTR_CLEANUP below. */}
+          <script dangerouslySetInnerHTML={{ __html: EXTENSION_ATTR_CLEANUP }} />
+        </head>
+      )}
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
         {/* If JavaScript is unavailable, show scroll-reveal content immediately instead of leaving it hidden. */}
         <noscript>
           <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
-        <ScrollProgress />
-        <Header categories={navCategories} />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <BackToTop />
-        <WhatsAppButton />
-        <PointerGlow />
+        <Suspense>
+          <NavigationProgress />
+        </Suspense>
+        {children}
       </body>
     </html>
   );

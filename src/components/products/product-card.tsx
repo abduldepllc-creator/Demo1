@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Star } from "lucide-react";
 import type { ProductWithCategory } from "@/db/schema";
@@ -6,6 +7,8 @@ import { SoapBlock } from "@/components/shared/soap-block";
 
 export function ProductCard({ product }: { product: ProductWithCategory }) {
   const color = product.color ?? product.category.color;
+  const cover = product.images[0];
+  const inStock = product.stockKg > 0;
 
   return (
     <Link
@@ -19,12 +22,22 @@ export function ProductCard({ product }: { product: ProductWithCategory }) {
           background: `radial-gradient(circle at 50% 40%, ${color}66 0%, #f1f4f2 70%)`,
         }}
       >
+        {cover ? (
+          <Image
+            src={cover}
+            alt={product.name}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <SoapBlock
+            color={color}
+            translucent={product.category.translucent}
+            className="w-[62%] transition-transform duration-700 ease-out group-hover:-translate-y-3 group-hover:scale-105 group-hover:-rotate-3"
+          />
+        )}
         <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,rgba(255,255,255,0.6)_50%,transparent_70%)] bg-size-[250%_100%] opacity-0 transition-opacity duration-500 group-hover:animate-shimmer group-hover:opacity-100" />
-        <SoapBlock
-          color={color}
-          translucent={product.category.translucent}
-          className="w-[62%] transition-transform duration-700 ease-out group-hover:-translate-y-3 group-hover:scale-105 group-hover:-rotate-3"
-        />
 
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
           {product.badge && (
@@ -34,8 +47,8 @@ export function ProductCard({ product }: { product: ProductWithCategory }) {
           )}
         </div>
         <span className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold text-navy backdrop-blur">
-          <span className={`size-1.5 rounded-full ${product.inStock ? "bg-brand" : "bg-amber-500"}`} />
-          {product.inStock ? "In stock" : "On order"}
+          <span className={`size-1.5 rounded-full ${inStock ? "bg-brand" : "bg-amber-500"}`} />
+          {inStock ? "In stock" : "On order"}
         </span>
       </div>
 
@@ -43,10 +56,13 @@ export function ProductCard({ product }: { product: ProductWithCategory }) {
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-bold tracking-wider text-brand uppercase">{product.category.name}</p>
-          <span className="flex items-center gap-1 text-xs font-semibold text-navy">
-            <Star className="size-3.5 fill-amber-400 text-amber-400" />
-            {product.rating.toFixed(1)}
-          </span>
+          {product.reviewCount > 0 && (
+            <span className="flex items-center gap-1 text-xs font-semibold text-navy">
+              <Star className="size-3.5 fill-amber-400 text-amber-400" />
+              {product.rating.toFixed(1)}
+              <span className="font-normal text-muted">({product.reviewCount})</span>
+            </span>
+          )}
         </div>
         <h3 className="mt-2 text-lg leading-snug font-extrabold text-navy transition-colors group-hover:text-brand-600">
           {product.name}

@@ -8,19 +8,25 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
+    "db:migrate": "tsx db/scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx src/db/seed/index.ts"
+    "db:seed": "tsx db/seed/index.ts",
+    "setup": "tsx db/scripts/setup.ts",
+    "db:reset": "tsx db/seed/index.ts --reset",
+    "storage:setup": "tsx db/scripts/storage.ts",
+    "db:local": "tsx db/scripts/local-db.ts",
+    "dev:local": "tsx db/scripts/local-db.ts --with-dev"
   },
   "dependencies": {
-    "@libsql/client": "^0.18.0",
+    "@supabase/supabase-js": "^2.119.2",
     "drizzle-orm": "^0.45.4",
     "lucide-react": "^1.82.0",
     "motion": "^14.14.0",
     "next": "16.4.6",
+    "postgres": "^4.1.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -30,6 +36,7 @@
     "@types/react-dom": "^19",
     "dotenv": "^18.0.10",
     "drizzle-kit": "^0.31.11",
+    "embedded-postgres": "^17.12.0-beta.19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SoapBlock } from "@/components/shared/soap-block";
@@ -10,6 +11,7 @@ type Props = {
   description: string;
   color: string;
   translucent: boolean;
+  imageUrl?: string | null;
   productCount: number;
   fromPrice: number | null;
 };
@@ -33,13 +35,25 @@ export function CategoryCard(c: Props) {
         </span>
       </div>
 
-      <div className="relative mx-auto my-6 w-[70%] max-w-60">
-        <SoapBlock
-          color={c.color}
-          translucent={c.translucent}
-          className="transition-transform duration-700 ease-out group-hover:-translate-y-4 group-hover:scale-110 group-hover:rotate-[-4deg]"
-        />
-      </div>
+      {c.imageUrl ? (
+        <div className="relative my-6 aspect-4/3 overflow-hidden rounded-2xl">
+          <Image
+            src={c.imageUrl}
+            alt={c.name}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        </div>
+      ) : (
+        <div className="relative mx-auto my-6 w-[70%] max-w-60">
+          <SoapBlock
+            color={c.color}
+            translucent={c.translucent}
+            className="transition-transform duration-700 ease-out group-hover:-translate-y-4 group-hover:scale-110 group-hover:rotate-[-4deg]"
+          />
+        </div>
+      )}
 
       <div className="relative mt-auto">
         <h3 className="text-xl font-extrabold text-navy">{c.name}</h3>

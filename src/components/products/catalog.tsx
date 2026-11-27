@@ -69,7 +69,7 @@ export function Catalog({ products, categories }: { products: ProductWithCategor
       {/* Toolbar */}
       <div className="sticky top-17.5 z-30 -mx-4 border-b border-navy/5 bg-white/90 px-4 py-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
             {chips.map((c) => (
               <button
                 key={c.slug}
@@ -188,12 +188,12 @@ export function CatalogSkeleton() {
     <div className="container-x pb-20">
       <div className="flex gap-2 py-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-9 w-28 animate-pulse rounded-full bg-mist" />
+          <div key={i} className="skeleton h-9 w-28 rounded-full" />
         ))}
       </div>
       <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-105 animate-pulse rounded-3xl bg-mist" />
+          <div key={i} className="skeleton h-105 rounded-3xl" />
         ))}
       </div>
     </div>
