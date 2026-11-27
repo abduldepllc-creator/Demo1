@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { ArrowLeft, ArrowRight, Clock, Lightbulb } from "lucide-react";
 import { GUIDES, getGuide, type GuideBlock } from "@/content/guides";
 import { siteConfig } from "@/config/site";
@@ -58,7 +60,17 @@ function Block({ block }: { block: GuideBlock }) {
   }
 }
 
-export default async function GuidePage({ params }: PageProps<"/guides/[slug]">) {
+// The page doesn't await `params` itself. It is read inside <Suspense>, so the shared App Shell
+// stays URL-independent and navigation can be instant (Partial Prefetching / Cache Components).
+export default function GuidePage({ params }: PageProps<"/guides/[slug]">) {
+  return (
+    <Suspense fallback={<PageSkeleton variant="article" />}>
+      <GuideContent params={params} />
+    </Suspense>
+  );
+}
+
+async function GuideContent({ params }: Pick<PageProps<"/guides/[slug]">, "params">) {
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) notFound();

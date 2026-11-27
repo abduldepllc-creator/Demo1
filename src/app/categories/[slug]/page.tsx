@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { ArrowRight, CheckCircle2, Lightbulb, Sparkles } from "lucide-react";
 import { getCategories, getCategoryBySlug } from "@/db/queries/catalog";
 import { CATEGORY_CONTENT } from "@/content/categories";
@@ -27,7 +29,17 @@ export async function generateMetadata({ params }: PageProps<"/categories/[slug]
   };
 }
 
-export default async function CategoryPage({ params }: PageProps<"/categories/[slug]">) {
+// The page doesn't await `params` itself. It is read inside <Suspense>, so the shared App Shell
+// stays URL-independent and navigation can be instant (Partial Prefetching / Cache Components).
+export default function CategoryPage({ params }: PageProps<"/categories/[slug]">) {
+  return (
+    <Suspense fallback={<PageSkeleton variant="grid" />}>
+      <CategoryContent params={params} />
+    </Suspense>
+  );
+}
+
+async function CategoryContent({ params }: Pick<PageProps<"/categories/[slug]">, "params">) {
   const { slug } = await params;
   const [category, all] = await Promise.all([getCategoryBySlug(slug), getCategories()]);
   if (!category) notFound();

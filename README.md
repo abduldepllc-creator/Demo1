@@ -239,6 +239,12 @@ Recommended options:
 
 ## Changelog
 
+### v1.2.2 — Instant navigation fix for dynamic pages (28 Nov 2026)
+- Fixed the Next.js "URL data outside of `<Suspense>`" warning on `/products/[slug]`, `/categories/[slug]` and `/guides/[slug]`. Each page now renders a `<Suspense>` boundary and reads `params` inside a child component (the pattern recommended in `node_modules/next/dist/docs/01-app/02-guides/adopting-partial-prefetching.md`). The shared page shell no longer depends on the URL, so navigation can be instant.
+- New `PageSkeleton` component (`src/components/shared/page-skeleton.tsx`): a branded loading placeholder (detail / grid / article variants) shown while URL-specific content streams in.
+- Known slugs are still fully prerendered at build time.
+- Unknown slugs (e.g. `/products/does-not-exist`) show the 404 page with HTTP status `200` plus `<meta name="robots" content="noindex">`, so search engines don't index them. This is the documented Next.js behaviour when `notFound()` runs inside a streamed `<Suspense>` boundary. A true `404` status would require `export const instant = false` on these routes, which gives up instant navigation.
+
 ### v1.2.1 — Hydration warning fix (28 Nov 2026)
 - Added `suppressHydrationWarning` to `<html>` and `<body>` in `src/app/layout.tsx`. Browser extensions (e.g. ColorZilla's `cz-shortcut-listen`) add attributes there before React loads, which caused a hydration-mismatch console error in development. It was not caused by the site's code. The setting only applies to those two elements, so real mismatches in components are still reported.
 

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { PageSkeleton } from "@/components/shared/page-skeleton";
 import { ArrowLeft, CheckCircle2, Package, ShieldCheck, Star, Truck } from "lucide-react";
 import { getProductBySlug, getProducts, getRelatedProducts } from "@/db/queries/catalog";
 import { getPriceTiers } from "@/lib/pricing";
@@ -27,7 +29,17 @@ export async function generateMetadata({ params }: PageProps<"/products/[slug]">
   };
 }
 
-export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
+// The page doesn't await `params` itself. It is read inside <Suspense>, so the shared App Shell
+// stays URL-independent and navigation can be instant (Partial Prefetching / Cache Components).
+export default function ProductPage({ params }: PageProps<"/products/[slug]">) {
+  return (
+    <Suspense fallback={<PageSkeleton variant="detail" />}>
+      <ProductContent params={params} />
+    </Suspense>
+  );
+}
+
+async function ProductContent({ params }: Pick<PageProps<"/products/[slug]">, "params">) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
